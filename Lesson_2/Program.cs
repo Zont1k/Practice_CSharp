@@ -1,30 +1,40 @@
 ﻿class Program
 {
+    public static HashSet<char> Vowels { get; set; } = new HashSet<char> { 'A', 'E', 'I', 'O', 'U' };
+    public static HashSet<char> Consonants { get; set; } = new HashSet<char> { 'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z' };
+
     static void Main(string[] args)
     {
-        string[] vowels = { "A", "E", "I", "O", "U" };
-        string[] consonants = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Y", "Z" };
-
         Console.WriteLine("write something...:");
-        string words = Console.ReadLine().ToUpper();
+        string words = Console.ReadLine().ToUpperInvariant();
         char[] charArrayLetters = words.ToCharArray();
-        int countConsonants = 0;
-        int countVowels = 0;
 
+        CountVowelsAndConsonants(charArrayLetters, out int countConsonants, out int countVowels);
+        Console.WriteLine($"Count of vowels letters: {countConsonants}");
+        Console.WriteLine($"Count of consonants letters: {countVowels}");
+    }
+
+    private static void CountVowelsAndConsonants(char[] charArrayLetters, out int countConsonants, out int countVowels)
+    {
+        countConsonants = 0;
+        countVowels = 0;
+        
         for (int i = 0; i < charArrayLetters.Length; i++)
         {
             char currentLetter = charArrayLetters[i];
 
-            if (Array.Exists(consonants, c => c[0] == currentLetter))
+            if (Consonants.Contains(currentLetter))
             {
                 countConsonants++;
             }
-            if (Array.Exists(vowels, v => v[0] == currentLetter))
+
+            if (Vowels.Contains(currentLetter))
             {
                 countVowels++;
             }
         }
-        Console.WriteLine($"Count of vowels letters: {countConsonants}");
-        Console.WriteLine($"Count of consonants letters: {countVowels}");
     }
 }
+
+// Todo: hashset 
+// Todo: Tuple
