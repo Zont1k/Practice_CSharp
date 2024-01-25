@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 class Program
 {
@@ -8,69 +9,48 @@ class Program
         try
         {
             Console.Write("Write ur name: ");
-            string name = Console.ReadLine();
-
-            if (int.TryParse(name, out _))
-            {
-                throw new Exception("U connot a int use");
-            }
-
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new Exception("Name is empty or null");
-            }
+            string name = ValidateStringTypes(Console.ReadLine());
 
             Console.Write("Write ur surname: ");
-            string surname = Console.ReadLine();
-            if(string.IsNullOrEmpty(surname))
-            {
-                throw new Exception("Surname is empty or null");
-            }
+            string surname = ValidateStringTypes(Console.ReadLine());
 
             Console.Write("Write ur height: ");
-            if(!double.TryParse(Console.ReadLine(), out double height))
+            if(!double.TryParse(Console.ReadLine(), out double height) || height < 0)
             {
                 throw new Exception("Error with height");
             }    
 
             Console.Write("Write ur birth day: ");
-            if(!int.TryParse(Console.ReadLine(), out int day))
-            {
-                throw new Exception("Error with day");
-            }
+            int day = ValidateIntTypes(Console.ReadLine());
+
 
             Console.Write("Write ur birth month: ");
-            if(!int.TryParse(Console.ReadLine(), out int month))
-            {
-                throw new Exception("Error with month");
-            }
+            int month = ValidateIntTypes(Console.ReadLine());
+
 
             Console.Write("Write ur birth year: ");
-            if(!int.TryParse(Console.ReadLine(), out int  year))
+            int year = ValidateIntTypes(Console.ReadLine());
+
+            try
             {
-                throw new Exception("Error with year");
+                DateTime birthday = new DateTime(year);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw new Exception("Invalid birthday date");
             }
 
             Console.Write("Write ur city: ");
-            string city = Console.ReadLine();
-            if(string.IsNullOrEmpty(city))
-            {
-                throw new Exception("City is empty or null");
-            }
+            string city = ValidateStringTypes(Console.ReadLine());
 
             Console.Write("Write ur country: ");
-            string country = Console.ReadLine();
-            if( string.IsNullOrEmpty(country) )
-            if( string.IsNullOrEmpty(country) )
-            {
-                throw new Exception("Country is empty or null");
-            }
+            string country = ValidateStringTypes(Console.ReadLine());
 
             Console.Write("Write ur phone number: ");
             string phoneNumber = Console.ReadLine();
-            if(string.IsNullOrEmpty(phoneNumber)) 
+            if (!Regex.IsMatch(phoneNumber, @"^\+?[0-9]{1,4}-?[0-9]{6,}$"))
             {
-                throw new Exception("Phone number is empty or null");
+                throw new Exception("Invalid phone number format.\nCorrect form: +00 (000) 00 000 000");
             }
 
             Console.WriteLine();
@@ -81,6 +61,24 @@ class Program
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
+    }
+
+    static string ValidateStringTypes(string name)
+    {
+        if (string.IsNullOrEmpty(name) || !Regex.IsMatch(name, @"^[A-Za-z\-']+$"))
+        {
+            throw new Exception("Invalid name format.");
+        }
+        return name;
+    }
+
+    static int ValidateIntTypes(string value)
+    {
+        if (!int.TryParse(value, out int result) || result <= 0)
+        {
+            throw new Exception("Invalid types format.");
+        }
+        return result;
     }
 
     static void DisplayInformation(string name, string surname, double height, int day, int month, int year, string city, string country, string phoneNumber)
