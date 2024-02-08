@@ -1,26 +1,7 @@
-﻿using System;
+﻿using Lesson_4_Exceptions;
+using System;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
-
-public class UserInputException : Exception
-{
-    public UserInputException(string message) : base(message) { }
-}
-
-public class InvalidNameException : UserInputException
-{
-    public InvalidNameException(string message) : base(message) { }
-}
-
-public class InvalidIntException : UserInputException
-{
-    public InvalidIntException(string message) : base(message) { }
-}
-
-public class InvalidDoubleException : UserInputException
-{
-    public InvalidDoubleException(string message) : base(message) { }
-}
 
 class Program
 {
@@ -29,33 +10,29 @@ class Program
         try
         {
             Console.Write("Write ur name: ");
-            string name = ValidateStringInputUsingRegularExpression(Console.ReadLine());
+            string name = ValidateStringNameInputUsingRegularExpression(Console.ReadLine());
 
             Console.Write("Write ur surname: ");
-            string surname = ValidateStringInputUsingRegularExpression(Console.ReadLine());
+            string surname = ValidateStringSurnameInputUsingRegularExpression(Console.ReadLine());
 
             Console.Write("Write ur height: ");
-            if(!double.TryParse(Console.ReadLine(), out double height) || height < 0)
-            {
-                throw new InvalidDoubleException("Error with height");
-            }    
+            double height = ValidateDoubleTypes();
 
             Console.Write("Write ur birth day: ");
             int day = ValidateIntTypes(Console.ReadLine());
 
-
             Console.Write("Write ur birth month: ");
             int month = ValidateIntTypes(Console.ReadLine());
 
-
             Console.Write("Write ur birth year: ");
             int year = ValidateIntTypes(Console.ReadLine());
+            DateTime birthday = new DateTime(year);
 
             Console.Write("Write ur city: ");
-            string city = ValidateStringInputUsingRegularExpression(Console.ReadLine());
+            string city = ValidateStringNameInputUsingRegularExpression(Console.ReadLine());
 
             Console.Write("Write ur country: ");
-            string country = ValidateStringInputUsingRegularExpression(Console.ReadLine());
+            string country = ValidateStringNameInputUsingRegularExpression(Console.ReadLine());
 
             Console.Write("Write ur phone number: ");
             string phoneNumber = Console.ReadLine();
@@ -64,26 +41,31 @@ class Program
                 throw new UserInputException("Invalid phone number format.\nCorrect form: +00 (000) 00 000 000");
             }
 
-            try
-            {
-                DateTime birthday = new DateTime(year);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw new UserInputException("Invalid birthday date");
-            }
-
             Console.WriteLine();
 
             DisplayInformation(name, surname, height, day, month, year, city, country, phoneNumber);
         }
-        catch(UserInputException ex)
+        catch (ArgumentOutOfRangeException)
+        {
+            throw new UserInputException("Invalid birthday date");
+        }
+        catch (UserInputException ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
     }
 
-    static string ValidateStringInputUsingRegularExpression(string name)
+    private static double ValidateDoubleTypes()
+    {
+        if (!double.TryParse(Console.ReadLine(), out double height) || height < 0)
+        {
+            throw new InvalidDoubleException("Error with height");
+        }
+
+        return height;
+    }
+
+    private static string ValidateStringNameInputUsingRegularExpression(string name)
     {
         if (string.IsNullOrEmpty(name) || !Regex.IsMatch(name, @"^[A-Za-z\-']+$"))
         {
@@ -92,7 +74,16 @@ class Program
         return name;
     }
 
-    static int ValidateIntTypes(string value)
+    private static string ValidateStringSurnameInputUsingRegularExpression(string name)
+    {
+        if (string.IsNullOrEmpty(name) || !Regex.IsMatch(name, @"^[A-Za-z\-']+$"))
+        {
+            throw new InvalidNameException("Invalid surname format. The name should only contain letters, hyphens, and apostrophes.");
+        }
+        return name;
+    }
+
+    private static int ValidateIntTypes(string value)
     {
         if (!int.TryParse(value, out int result) || result <= 0)
         {
