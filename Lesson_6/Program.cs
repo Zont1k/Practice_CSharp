@@ -1,13 +1,14 @@
 ﻿using AutoFixture;
 using Lesson_6_StudentProperties;
+using Spectre.Console;
+using System.Text.Json;
 
 class Program
 {
+    private static readonly Fixture fixture = new Fixture();
     static void Main(string[] args)
     {
-        var fixture = new Fixture();
-
-        var students = new List<Student>();
+       var students = new List<Student>();
 
         for (int i = 0; i < 10; i++)
         {
@@ -15,274 +16,193 @@ class Program
             students.Add(student);
         }
 
-        FilterStudentsByFirstLetter(students); // Фильтрация студентов по первой букве имени
+        var filteredStudents = FilterStudentsByFirstLetter(students);
 
-        OrderStudentsByNameAndDateOfBirth(students); // Сортировка студентов сначала по имени, а затем по дате рождения
+        var orderedStudents = OrderStudentsByNameAndDateOfBirth(students);
 
-        RemoveDuplicates(students); // Удаление дубликатов студентов из списка
+        var uniqueStudents = RemoveDuplicates(students);
 
-        FindEarliestDateOfBirth(students); // Нахождение самой ранней даты рождения студентов
+        var earliestDateOfBirth = FindEarliestDateOfBirth(students);
 
-        ReturnFirstElement(students); // Возврат первого элемента из списка студентов
+        var firstElement = ReturnFirstElement(students);
 
-        ReturnLastElement(students); // Возврат последнего элемента из списка студентов
+        var lastElement = ReturnLastElement(students);
 
-        ElementAtMethod(students); // Получение элемента по индексу
+        var elementAtStudent = ElementAtMethod(students);
 
-        ConcatListsMethod(students); // Объединение двух списков студентов
+        var concatenatedLists = ConcatListsMethod(students);
 
-        SkipElements(students); // Пропуск указанного количества элементов в списке
+        var skippedElements = SkipElements(students);
 
-        TakeElements(students); // Взятие указанного количества элементов из начала списка
+        var tookStudentElements = TakeElements(students);
 
-        ZipElements(students); // Создание пар из элементов двух списков
+        var zippedElements = ZipElements(students);
 
-        PrintSingleStudent(students); // Вывод информации о единственном студенте с указанным именем
+        var singleOrDefault = PrintSingleStudent(students);
 
-        FoundMaxDateOfBirth(students); // Нахождение максимальной даты рождения среди студентов
+        var maxElementInStudentList = FoundMaxDateOfBirth(students);
 
-        FoundMinDateOfBirth(students); // Нахождение минимальной даты рождения среди студентов
+        var minElementInStudentList = FoundMinDateOfBirth(students);
 
-        CountElemetsInStudentList(students); // Подсчет количества элементов в списке студентов
+        var countStudentsElementsList = CountElementsInStudentList(students);
 
-        IntersectElemetsInStudentList(students); // Нахождение пересечения двух списков студентов
+        var intersectElementsInStudentList = IntersectElementsInStudentList(students);
 
-        UnoinElementsInStudentList(students); // Объединение двух списков студентов
+        var unionElementsInStudentList = UnionElementsInStudentList(students);
 
-        ExceptElementsInStudentList(students); // Исключение элементов одного списка из другого списка
+        var exceptElementsInStudentList = ExceptElementsInStudentList(students);
 
-        ContainsMethod(students, "Oleksii"); // Проверка наличия студента с определенным именем в списке
+        var containsMethod = ContainsMethod(students, "Oleksii");
 
-        AllStudentsAdult(students); // Проверка, являются ли все студенты взрослыми
+        var allStudentsIsAdult = AllStudentsIsAdult(students);
 
-        ReverseList(students); // Разворот списка студентов
+        var reverseList = ReverseList(students);
 
-        ToLookUpMethod(students); // Преобразование списка студентов в Lookup для группировки по первой букве имени
+        var toLookUp = ToLookUpMethod(students);
 
-        GroupByMethod(students); // Группировка студентов по первой букве имени
+        var groupedStudents = GroupByMethod(students);
 
-        JoinMethod(students); // Присоединение студентов к другому списку по фамилии
+        var joinListStudents = JoinMethod(students);
 
-        ThenByDescendingMethod(students); // Сортировка студентов по имени в порядке убывания, а затем по дате рождения
+        var thenByDescending = ThenByDescendingMethod(students);
 
-        ThenByMethod(students); // Сортировка студентов по имени, а затем по дате рождения
+        var thenBy = ThenByMethod(students);
 
-        OrderByDescendingMethod(students); // Сортировка студентов по дате рождения в порядке убывания
+        var orderByDescending = OrderByDescendingMethod(students);
+
+        PrintSerializedObject(filteredStudents);
+        PrintSerializedObject(orderedStudents);
+        PrintSerializedObject(uniqueStudents);
+        PrintSerializedObject(earliestDateOfBirth);
+        PrintSerializedObject(firstElement);
+        PrintSerializedObject(lastElement);
+        PrintSerializedObject(elementAtStudent);
+        PrintSerializedObject(concatenatedLists);
+        PrintSerializedObject(skippedElements);
+        PrintSerializedObject(tookStudentElements);
+        PrintSerializedObject(zippedElements);
+        PrintSerializedObject(singleOrDefault);
+        PrintSerializedObject(maxElementInStudentList);
+        PrintSerializedObject(minElementInStudentList);
+        PrintSerializedObject(countStudentsElementsList);
+        PrintSerializedObject(intersectElementsInStudentList);
+        PrintSerializedObject(unionElementsInStudentList);
+        PrintSerializedObject(exceptElementsInStudentList);
+        PrintSerializedObject(containsMethod);
+        PrintSerializedObject(allStudentsIsAdult);
+        PrintSerializedObject(reverseList);
+        PrintSerializedObject(toLookUp);
+        PrintSerializedObject(groupedStudents);
+        PrintSerializedObject(joinListStudents);
+        PrintSerializedObject(thenByDescending);
+        PrintSerializedObject(thenBy);
+        PrintSerializedObject(thenByDescending);
     }
 
-    // Фильтрация студентов по первой букве имени
-    private static void FilterStudentsByFirstLetter(List<Student> students)
+    // Method for creating a second list of students
+    private static List<Student> CreateSecondStudentList()
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("1) FilterStudentsByFirstLetter");
-        Console.ResetColor();
-
-        var selectedStudents = students
-            .Where(s => new[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-                                "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" }
-            .Contains(s.FirstName.ToUpper().Substring(0, 1)))
-            .OrderBy(s => s.FirstName);
-
-        foreach (Student student in selectedStudents)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(student.FirstName);
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
-    }
-
-    // Сортировка студентов сначала по имени, а затем по дате рождения
-    private static void OrderStudentsByNameAndDateOfBirth(List<Student> students)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("2) OrderStudentsByNameAndDateOfBirth");
-        Console.ResetColor();
-
-        var selectedStudents = from s in students
-                               orderby s.FirstName, s.DateOfBirth
-                               select s;
-        foreach (Student s in selectedStudents)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"FirstName: {s.FirstName} - {s.DateOfBirth}");
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
-    }
-
-    // Удаление дубликатов студентов из списка
-    private static void RemoveDuplicates(List<Student> students)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("3) RemoveDuplicates");
-        Console.ResetColor();
-
-        var result = students.Distinct();
-
-        foreach (Student s in result)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(s.FirstName);
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
-    }
-
-    // Нахождение самой ранней даты рождения студентов
-    private static void FindEarliestDateOfBirth(List<Student> students)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("4) FindEarliestDateOfBirth");
-        Console.ResetColor();
-
-        DateTime earliestDateOfBirth = students
-            .Select(s => s.DateOfBirth)
-            .Aggregate((earliest, next) => next < earliest ? next : earliest);
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"Earliest Date of Birth: {earliestDateOfBirth}");
-        Console.ResetColor();
-
-        Console.WriteLine();
-    }
-
-    // Возврат первого элемента из списка студентов
-    private static void ReturnFirstElement(List<Student> students)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("5) ReturnFirstElement");
-        Console.ResetColor();
-
-        var firstElement = students.FirstOrDefault();
-
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"First Element in List: {firstElement}");
-        Console.ResetColor();
-
-        Console.WriteLine();
-    }
-
-    // Возврат последнего элемента из списка студентов
-    private static void ReturnLastElement(List<Student> students)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("6) ReturnLastElement");
-        Console.ResetColor();
-
-        var lastElement = students.LastOrDefault();
-
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"Last Element in List: {lastElement}");
-        Console.ResetColor();
-
-        Console.WriteLine();
-    }
-
-    // Получение элемента по индексу
-    private static void ElementAtMethod(List<Student> students)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("7) ElementAtMethod");
-        Console.ResetColor();
-
-        Student elementAt = students.ElementAt(4);
-
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"Student at index 4:\n" +
-            $"FirstName: {elementAt.FirstName},\n" +
-            $"LastName: {elementAt.LastName},\n" +
-            $"DateOfBirth: {elementAt.DateOfBirth},\n" +
-            $"Country: {elementAt.Country},\n" +
-            $"City: {elementAt.City}");
-        Console.ResetColor();
-
-        Console.WriteLine();
-    }
-
-    // Объединение двух списков студентов
-    private static void ConcatListsMethod(List<Student> students)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("8) ConcatListsMethod");
-        Console.ResetColor();
-
-        List<Student> newList = new List<Student>();
-
-        var newFixture = new Fixture();
+        var secondList = new List<Student>();
 
         for (int i = 0; i < 10; i++)
         {
-            var fakeStudent = newFixture.Create<Student>();
+            var student = fixture.Create<Student>();
+            secondList.Add(student);
+        }
+        return secondList;
+    }
+
+    static void PrintSerializedObject(object obj)
+    {
+        // Опции сериализации: установка форматирования для минификации JSON
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = false
+        };
+
+        // Сериализация объекта в JSON строку
+        string jsonString = JsonSerializer.Serialize(obj, options);
+
+        // Вывод JSON строки на консоль
+        Console.WriteLine($"\n{jsonString}");
+    }
+
+    private static IEnumerable<Student> FilterStudentsByFirstLetter(List<Student> students)
+    {
+        return students
+            .Where(s => char.IsLetter(s.FirstName[0]))
+            .OrderBy(s => s.FirstName);
+    }
+
+    private static IEnumerable<Student> OrderStudentsByNameAndDateOfBirth(List<Student> students)
+    {
+        return students
+            .OrderBy(s => s.FirstName)
+            .ThenBy(s => s.DateOfBirth);
+    }
+
+        // The standard equality comparator compares objects by reference, not by content. This means that if two objects
+        // refer to the same location in memory (have the same reference), then they will be considered the same and one of
+        // them will be deleted as a duplicate.
+    private static IEnumerable<Student> RemoveDuplicates(List<Student> students)
+    {
+        return students.Distinct();
+    }
+
+    private static DateTime FindEarliestDateOfBirth(List<Student> students)
+    {
+        return students
+            .Select(s => s.DateOfBirth)
+            .Aggregate((earliest, next) => next < earliest ? next : earliest);
+    }
+
+    // Returning the first element from the list of students
+    private static IEnumerable<Student> ReturnFirstElement(List<Student> students)
+    {
+        yield return students.FirstOrDefault();
+    }
+
+    // Returning the last element from the list of students
+    private static IEnumerable<Student> ReturnLastElement(List<Student> students)
+    {
+        yield return students.LastOrDefault();
+    }
+
+    // Getting an element by index
+    private static IEnumerable<Student> ElementAtMethod(List<Student> students)
+    {
+        yield return students.ElementAt(4);
+    }
+
+    // Concatenating two lists of students
+    private static IEnumerable<Student> ConcatListsMethod(List<Student> students)
+    {
+        List<Student> newList = new List<Student>();
+
+        for (int i = 0; i < 10; i++)
+        {
+            var fakeStudent = fixture.Create<Student>();
             newList.Add(fakeStudent);
         }
 
-        var concatenatedLists = newList.Concat(students);
-
-        foreach (Student student in concatenatedLists)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Concatenated List student with List newList:");
-            Console.WriteLine($"FirstName: {student.FirstName}");
-            Console.WriteLine($"LastName: {student.LastName}");
-            Console.WriteLine($"DateOfBirth: {student.DateOfBirth}");
-            Console.WriteLine($"Country: {student.Country}");
-            Console.WriteLine($"City: {student.City}");
-            Console.ResetColor();
-
-            Console.WriteLine();
-        }
+        return newList.Concat(students);
     }
 
-    // Пропуск указанного количества элементов в списке
-    private static void SkipElements(List<Student> students)
+    // Skipping a specified number of elements in the list
+    private static IEnumerable<Student> SkipElements(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("9) SkipElements");
-        Console.ResetColor();
-
-        var skippedElements = students.Skip(3);
-
-        foreach (Student student in skippedElements)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Skipped elements: {student.FirstName}");
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
+        return students.Skip(3);
     }
 
-    // Взятие указанного количества элементов из начала списка
-    private static void TakeElements(List<Student> students)
+    // Taking a specified number of elements from the beginning of the list
+    private static IEnumerable<Student> TakeElements(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("10) TakeElements");
-        Console.ResetColor();
-
-        var takeElements = students.Take(2);
-
-        foreach (Student student in takeElements)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Take 2 Elements: {student}");
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
+        return students.Take(2);
     }
 
-    // Создание пар из элементов двух списков
-    private static void ZipElements(List<Student> students)
+    // Creating pairs from elements of two lists
+    private static IEnumerable<(Student, Student)> ZipElements(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("11) ZipElements");
-        Console.ResetColor();
-
-        var fixture = new Fixture();
-
         var secondListOfStudents = new List<Student>();
 
         for (int i = 0; i < 10; i++)
@@ -291,247 +211,71 @@ class Program
             secondListOfStudents.Add(student);
         }
 
-        var zippedStudents = students.Zip(secondListOfStudents, (first, second) => new
-        {
-            FirstStudent = first,
-            SecondStudent = second
-        });
-
-        foreach (var pair in zippedStudents)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"First Student: {pair.FirstStudent.FirstName} - Second Student: {pair.SecondStudent.FirstName}");
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
+        return students.Zip(secondListOfStudents, (first, second) => (first, second));
     }
 
-    // Вывод информации о единственном студенте с указанным именем
-    private static void PrintSingleStudent(List<Student> students)
+    // Printing information about a single student with a specified name
+    private static IEnumerable<Student> PrintSingleStudent(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("12) PrintSingleStudent");
-        Console.ResetColor();
-
-        var singleOrDefault = students.SingleOrDefault(x => x.FirstName == "Student");
-
-        if (singleOrDefault != null)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Single Student: {singleOrDefault}");
-            Console.ResetColor();
-        }
-        else
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Student with name 'Student' not found");
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
+        yield return students.SingleOrDefault(x => x.FirstName == "Student");
     }
 
-    // Нахождение максимальной даты рождения среди студентов
-    private static void FoundMaxDateOfBirth(List<Student> students)
+    // Finding the maximum date of birth among students
+    private static IEnumerable<Student> FoundMaxDateOfBirth(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("13) FoundMaxDateOfBirth");
-        Console.ResetColor();
+        var maxDateOfBirth = students.Max(x => x.DateOfBirth);
 
-        var maxElementInStudentList = students.Max(x => x.DateOfBirth);
-
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"Maximum Date of Birth: {maxElementInStudentList}");
-        Console.ResetColor();
-
-        Console.WriteLine();
+        return students.Where(s => s.DateOfBirth == maxDateOfBirth);
     }
 
-    // Нахождение минимальной даты рождения среди студентов
-    private static void FoundMinDateOfBirth(List<Student> students)
+    // Finding the minimum date of birth among students
+    private static IEnumerable<Student> FoundMinDateOfBirth(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("14) FoundMinDateOfBirth");
-        Console.ResetColor();
+        var minDateOfBirth = students.Min(x => x.DateOfBirth);
 
-        var minElementInStudentList = students.Min(x => x.DateOfBirth);
-
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"Minimum Date of Birth: {minElementInStudentList}");
-        Console.ResetColor();
-
-        Console.WriteLine();
+        return students.Where(x => x.DateOfBirth == minDateOfBirth);
     }
 
-    // Подсчет количества элементов в списке студентов
-    private static void CountElemetsInStudentList(List<Student> students)
+    // Counting the number of elements in the list of students
+    private static int CountElementsInStudentList(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("15) CountElemetsInStudentList");
-        Console.ResetColor();
-
-        var countStudentsElementsList = students.Count();
-
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"Count: {countStudentsElementsList}");
-        Console.ResetColor();
-
-        Console.WriteLine();
+        return students.Count();
     }
 
-    // Нахождение пересечения двух списков студентов
-    private static void IntersectElemetsInStudentList(List<Student> students)
+    // Finding the intersection of two lists of students
+    private static IEnumerable<Student> IntersectElementsInStudentList(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("16) IntersectElemetsInStudentList");
-        Console.ResetColor();
+        var secondIntersectListOfStudents = CreateSecondStudentList();
 
-        var fixture = new Fixture();
-
-        var secondIntersectListOfStudents = new List<Student>();
-        for (int i = 0; i < 10; i++)
-        {
-            var student = fixture.Create<Student>();
-            secondIntersectListOfStudents.Add(student);
-        }
-
-        var intersection = students.Intersect(secondIntersectListOfStudents);
-
-        if (!intersection.Any())
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("There no common elements in student lists");
-            Console.ResetColor();
-        }
-        else
-        {
-            foreach (Student student in intersection)
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Intersection: {student.FirstName}");
-                Console.ResetColor();
-            }
-        }
-
-        Console.WriteLine();
+        return students.Intersect(secondIntersectListOfStudents);
     }
 
-    // Объединение двух списков студентов
-    private static void UnoinElementsInStudentList(List<Student> students)
+    // Union of two lists of students
+    private static IEnumerable<Student> UnionElementsInStudentList(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("17) UnoinElementsInStudentList");
-        Console.ResetColor();
+        var secondUnionListOfStudents = CreateSecondStudentList();
 
-        var fixture = new Fixture();
-
-        var secondUnionListOfStudents = new List<Student>();
-        for (int i = 0; i < 10; i++)
-        {
-            var student = fixture.Create<Student>();
-            secondUnionListOfStudents.Add(student);
-        }
-
-        var union = students.Union(secondUnionListOfStudents);
-
-        foreach (Student student in union)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\nUnion Elements:");
-            Console.WriteLine($"FirstName: {student.FirstName}");
-            Console.WriteLine($"LastName: {student.LastName}");
-            Console.WriteLine($"DateOfBirth: {student.DateOfBirth}");
-            Console.WriteLine($"Country: {student.Country}");
-            Console.WriteLine($"City: {student.City}");
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
+        return students.Union(secondUnionListOfStudents);
     }
 
-    // Исключение элементов одного списка из другого списка
-    private static void ExceptElementsInStudentList(List<Student> students)
+    // Excluding elements of one list from another list
+    private static IEnumerable<Student> ExceptElementsInStudentList(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("18) ExceptElementsInStudentList");
-        Console.ResetColor();
+        var secondExceptListOfStudents = CreateSecondStudentList();
 
-        var fixture = new Fixture();
-
-        var secondExceptListOfStudents = new List<Student>();
-        for (int i = 0; i < 10; i++)
-        {
-            var student = fixture.Create<Student>();
-            secondExceptListOfStudents.Add(student);
-        }
-
-        var except = students.Except(secondExceptListOfStudents);
-
-        foreach (Student student in except)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\nExcept Elements:");
-            Console.WriteLine($"FirstName: {student.FirstName}");
-            Console.WriteLine($"LastName: {student.LastName}");
-            Console.WriteLine($"DateOfBirth: {student.DateOfBirth}");
-            Console.WriteLine($"Country: {student.Country}");
-            Console.WriteLine($"City: {student.City}");
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
+        return students.Except(secondExceptListOfStudents);
     }
 
-    // Проверка наличия студента с определенным именем в списке
-    private static void ContainsMethod(List<Student> students, string firstName)
+    // Checking for the presence of a student with a specific name in the list
+    private static bool ContainsMethod(List<Student> students, string firstName)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("19) ContainsMethod");
-        Console.ResetColor();
-
-        bool containsFirstName = students.Select(s => s.FirstName).Contains(firstName, StringComparer.OrdinalIgnoreCase);
-
-        if (containsFirstName)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"List contains student with the first name '{firstName}'.");
-            Console.ResetColor();
-        }
-        else
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"List does not contain student with the first name '{firstName}'.");
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
+        return students.Select(s => s.FirstName).Contains(firstName, StringComparer.OrdinalIgnoreCase);
     }
 
-    // проверка, являются ли все студенты взрослыми
-    private static void AllStudentsAdult(List<Student> students)
+    // Checking if all students are adults
+    private static bool AllStudentsIsAdult(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("20) AllCheckElements");
-        Console.ResetColor();
-
-        bool allAdults = students.All(s => IsAdult(s.DateOfBirth));
-
-        if(allAdults)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("All students are adults");
-            Console.ResetColor();
-        }
-        else
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Not all students are adults");
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
-
+        return students.All(s => IsAdult(s.DateOfBirth));
 
         static bool IsAdult(DateTime dateOfBirth)
         {
@@ -546,178 +290,58 @@ class Program
         }
     }
 
-    // Разворот списка студентов
-    private static void ReverseList(List<Student> students)
+    // Reversing the list of students
+    private static IEnumerable<Student> ReverseList(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("21) ReverseMethod");
-        Console.ResetColor();
-
-        students.Reverse();
-
-        foreach (Student student in students)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\nReverse Elements:");
-            Console.WriteLine($"FirstName: {student.FirstName}");
-            Console.WriteLine($"City: {student.City}");
-            Console.WriteLine($"Country: {student.Country}");
-            Console.WriteLine($"DateOfBirth: {student.DateOfBirth}");
-            Console.WriteLine($"LastName: {student.LastName}");
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
+        var reversedList = students.ToList();
+        reversedList.Reverse();
+        return reversedList;
     }
 
-    // Преобразование списка студентов в Lookup для группировки по первой букве имени
-    private static void ToLookUpMethod(List<Student> students)
+    // Converting the list of students to a Lookup for grouping by the first letter of the name
+    private static ILookup<char, Student> ToLookUpMethod(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("22) ToLookUpMethod");
-        Console.ResetColor();
-
-        var studentsLookUp = students.ToLookup(s => s.FirstName[0]);
-
-        foreach (var group in studentsLookUp)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Students with names starting with '{group.Key}':");
-            Console.ResetColor();
-
-            foreach (var student in group)
-            {
-                Console.WriteLine($"- {student.FirstName} {student.LastName}");
-            }
-
-            Console.WriteLine();
-        }
-
+        return students.ToLookup(s => s.FirstName[0]);
     }
 
-    // Группировка студентов по первой букве имени
-    private static void GroupByMethod(List<Student> students)
+    // Grouping students by the first letter of the name
+    private static IEnumerable<IGrouping<char, Student>> GroupByMethod(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("23) GroupByMethod");
-        Console.ResetColor();
-
-        var groupedStudents = students.GroupBy(s => s.FirstName[0]);
-
-        foreach (var group in groupedStudents)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Students with names starting with '{group.Key}':");
-            Console.ResetColor();
-
-            foreach (var student in group)
-            {
-                Console.WriteLine($"- {student.FirstName} {student.LastName}");
-            }
-
-            Console.WriteLine();
-        }
+        return students.GroupBy(s => s.FirstName[0]);
     }
 
-    // Присоединение студентов к другому списку по фамилии
-    private static void JoinMethod(List<Student> students)
+    // Joining students to another list by last name
+    private static IEnumerable<Student> JoinMethod(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("24) JoinMethod");
-        Console.ResetColor();
+        var secondListOfStudents = CreateSecondStudentList();
 
-        var fixture = new Fixture();
-        var secondListOfStudents = new List<Student>();
-        for (int i = 0; i < 10; i++)
-        {
-            var student = fixture.Create<Student>();
-            secondListOfStudents.Add(student);
-        }
-
-        var joinedStudents = students.Join(
+        return students.Join(
             secondListOfStudents,
             student => student.LastName,
             secondStudent => secondStudent.LastName,
-            (student, secondStudent) => new { Student = student, SecondStudent = secondStudent }
+            (student, secondStudent) => student
         );
-
-        if(joinedStudents.Any())
-        {
-            foreach (var pair in joinedStudents)
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Student: {pair.Student.LastName} - Second Student: {pair.SecondStudent.FirstName}");
-                Console.ResetColor();
-            }
-        }
-        else
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("No matches found");
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
     }
 
-    // Сортировка студентов по имени в порядке убывания, азатем по дате рождения
-    private static void ThenByDescendingMethod(List<Student> students)
+    // Sorting students by name in descending order, then by date of birth
+    private static IEnumerable<Student> ThenByDescendingMethod(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("25) ThenByDescendingMethod");
-        Console.ResetColor();
-
-        var orderedStudents = students
+        return students
             .OrderBy(s => s.FirstName)
             .ThenByDescending(s => s.DateOfBirth);
-
-        foreach(var student in orderedStudents)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Name: {student.FirstName}, Date of Birth: {student.DateOfBirth}");
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
     }
 
-    //Сортировка студентов по имени, а затем по дате рождения
-    private static void ThenByMethod(List<Student> students)
+    // Sorting students by name, then by date of birth
+    private static IEnumerable<Student> ThenByMethod(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("26) ThenByMethod");
-        Console.ResetColor();
-
-        var orderedStudents = students
+        return students
             .OrderBy(s => s.FirstName)
             .ThenBy(s => s.DateOfBirth);
-
-        foreach (var student in orderedStudents)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Name: {student.FirstName}, Date of Birth: {student.DateOfBirth}");
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
     }
 
-    // Сортировка студентов по дате рождения в порядке убывания
-    private static void OrderByDescendingMethod(List<Student> students)
+    // Sorting students by date of birth in descending order
+    private static IEnumerable<Student> OrderByDescendingMethod(List<Student> students)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("27) OrderByDescendingMethod");
-        Console.ResetColor();
-
-        var orderedStudents = students.OrderByDescending(s => s.DateOfBirth);
-
-        foreach(var student in orderedStudents)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Name: {student.FirstName}, Date of Birth: {student.DateOfBirth}");
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
+        return students.OrderByDescending(s => s.DateOfBirth);
     }
 }
