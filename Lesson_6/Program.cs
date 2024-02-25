@@ -8,13 +8,7 @@ class Program
     private static readonly Fixture fixture = new Fixture();
     static void Main(string[] args)
     {
-       var students = new List<Student>();
-
-        for (int i = 0; i < 10; i++)
-        {
-            var student = fixture.Create<Student>();
-            students.Add(student);
-        }
+       var students = CreateStudentList();
 
         var filteredStudents = FilterStudentsByFirstLetter(students);
 
@@ -54,7 +48,7 @@ class Program
 
         var containsMethod = ContainsMethod(students, "Oleksii");
 
-        var allStudentsIsAdult = AllStudentsIsAdult(students);
+        var allStudentsIsAdult = AreAllStidentsAdult(students);
 
         var reverseList = ReverseList(students);
 
@@ -70,37 +64,64 @@ class Program
 
         var orderByDescending = OrderByDescendingMethod(students);
 
+        AnsiConsole.MarkupLine("[red]1) FilterStudentsByFirstLetter[/]");
         PrintSerializedObject(filteredStudents);
+        AnsiConsole.MarkupLine("[red]2) OrderStudentsByNameAndDateOfBirth[/]");
         PrintSerializedObject(orderedStudents);
+        AnsiConsole.MarkupLine("[red]3) RemoveDuplicates[/]");
         PrintSerializedObject(uniqueStudents);
+        AnsiConsole.MarkupLine("[red]4) FindEarliestDateOfBirth[/]");
         PrintSerializedObject(earliestDateOfBirth);
+        AnsiConsole.MarkupLine("[red]5) ReturnFirstElement[/]");
         PrintSerializedObject(firstElement);
+        AnsiConsole.MarkupLine("[red]6) ReturnLastElement[/]");
         PrintSerializedObject(lastElement);
+        AnsiConsole.MarkupLine("[red]7) ElementAtStudent[/]");
         PrintSerializedObject(elementAtStudent);
+        AnsiConsole.MarkupLine("[red]8) ConcatListsMethod[/]");
         PrintSerializedObject(concatenatedLists);
+        AnsiConsole.MarkupLine("[red]9) SkipElements[/]");
         PrintSerializedObject(skippedElements);
+        AnsiConsole.MarkupLine("[red]10) TakeElements[/]");
         PrintSerializedObject(tookStudentElements);
+        AnsiConsole.MarkupLine("[red]11) ZipElements[/]");
         PrintSerializedObject(zippedElements);
+        AnsiConsole.MarkupLine("[red]12) PrintSingleStudent[/]");
         PrintSerializedObject(singleOrDefault);
+        AnsiConsole.MarkupLine("[red]13) FoundMaxDateOfBirth[/]");
         PrintSerializedObject(maxElementInStudentList);
+        AnsiConsole.MarkupLine("[red]14) FoundMinDateOfBirth[/]");
         PrintSerializedObject(minElementInStudentList);
+        AnsiConsole.MarkupLine("[red]15) CountStudentsElementsList[/]");
         PrintSerializedObject(countStudentsElementsList);
+        AnsiConsole.MarkupLine("[red]16) IntersectElementsInStudentList[/]");
         PrintSerializedObject(intersectElementsInStudentList);
+        AnsiConsole.MarkupLine("[red]17) UnionElementsInStudentList[/]");
         PrintSerializedObject(unionElementsInStudentList);
+        AnsiConsole.MarkupLine("[red]18) ExceptElementsInStudentList[/]");
         PrintSerializedObject(exceptElementsInStudentList);
+        AnsiConsole.MarkupLine("[red]19) ContainsMethod[/]");
         PrintSerializedObject(containsMethod);
+        AnsiConsole.MarkupLine("[red]20) AllCheckElements[/]");
         PrintSerializedObject(allStudentsIsAdult);
+        AnsiConsole.MarkupLine("[red]21) ReverseMethod[/]");
         PrintSerializedObject(reverseList);
+        AnsiConsole.MarkupLine("[red]22) ToLookUpMethod[/]");
         PrintSerializedObject(toLookUp);
+        AnsiConsole.MarkupLine("[red]23) GroupByMethod[/]");
         PrintSerializedObject(groupedStudents);
+        AnsiConsole.MarkupLine("[red]24) JoinMethod[/]");
         PrintSerializedObject(joinListStudents);
+        AnsiConsole.MarkupLine("[red]25) ThenByDescendingMethod[/]");
         PrintSerializedObject(thenByDescending);
+        AnsiConsole.MarkupLine("[red]26) ThenByMethod[/]");
         PrintSerializedObject(thenBy);
-        PrintSerializedObject(thenByDescending);
+        AnsiConsole.MarkupLine("[red]27) OrderByDescendingMethod[/]");
+        PrintSerializedObject(orderByDescending);
     }
 
     // Method for creating a second list of students
-    private static List<Student> CreateSecondStudentList()
+    private static List<Student> CreateStudentList()
     {
         var secondList = new List<Student>();
 
@@ -114,16 +135,16 @@ class Program
 
     static void PrintSerializedObject(object obj)
     {
-        // Опции сериализации: установка форматирования для минификации JSON
+        // Serialization options: set formatting for JSON minification
         var options = new JsonSerializerOptions
         {
             WriteIndented = false
         };
 
-        // Сериализация объекта в JSON строку
+        // Serialize an object in JSON format
         string jsonString = JsonSerializer.Serialize(obj, options);
 
-        // Вывод JSON строки на консоль
+        // Output JSON string to console
         Console.WriteLine($"\n{jsonString}");
     }
 
@@ -157,9 +178,9 @@ class Program
     }
 
     // Returning the first element from the list of students
-    private static IEnumerable<Student> ReturnFirstElement(List<Student> students)
+    private static Student ReturnFirstElement(List<Student> students)
     {
-        yield return students.FirstOrDefault();
+        return students.FirstOrDefault();
     }
 
     // Returning the last element from the list of students
@@ -177,15 +198,9 @@ class Program
     // Concatenating two lists of students
     private static IEnumerable<Student> ConcatListsMethod(List<Student> students)
     {
-        List<Student> newList = new List<Student>();
+        var secondListOfStudents = CreateStudentList();
 
-        for (int i = 0; i < 10; i++)
-        {
-            var fakeStudent = fixture.Create<Student>();
-            newList.Add(fakeStudent);
-        }
-
-        return newList.Concat(students);
+        return secondListOfStudents.Concat(students);
     }
 
     // Skipping a specified number of elements in the list
@@ -203,13 +218,7 @@ class Program
     // Creating pairs from elements of two lists
     private static IEnumerable<(Student, Student)> ZipElements(List<Student> students)
     {
-        var secondListOfStudents = new List<Student>();
-
-        for (int i = 0; i < 10; i++)
-        {
-            var student = fixture.Create<Student>();
-            secondListOfStudents.Add(student);
-        }
+        var secondListOfStudents = CreateStudentList();
 
         return students.Zip(secondListOfStudents, (first, second) => (first, second));
     }
@@ -221,19 +230,19 @@ class Program
     }
 
     // Finding the maximum date of birth among students
-    private static IEnumerable<Student> FoundMaxDateOfBirth(List<Student> students)
+    private static Student FoundMaxDateOfBirth(List<Student> students)
     {
-        var maxDateOfBirth = students.Max(x => x.DateOfBirth);
+        var maxDateOfBirth = students.MaxBy(x => x.DateOfBirth)?.DateOfBirth;
 
-        return students.Where(s => s.DateOfBirth == maxDateOfBirth);
+        return students.FirstOrDefault(s => s.DateOfBirth == maxDateOfBirth);
     }
 
     // Finding the minimum date of birth among students
-    private static IEnumerable<Student> FoundMinDateOfBirth(List<Student> students)
+    private static Student FoundMinDateOfBirth(List<Student> students)
     {
-        var minDateOfBirth = students.Min(x => x.DateOfBirth);
+        var minDateOfBirth = students.MinBy(x => x.DateOfBirth)?.DateOfBirth;
 
-        return students.Where(x => x.DateOfBirth == minDateOfBirth);
+        return students.FirstOrDefault(x => x.DateOfBirth == minDateOfBirth);
     }
 
     // Counting the number of elements in the list of students
@@ -245,7 +254,7 @@ class Program
     // Finding the intersection of two lists of students
     private static IEnumerable<Student> IntersectElementsInStudentList(List<Student> students)
     {
-        var secondIntersectListOfStudents = CreateSecondStudentList();
+        var secondIntersectListOfStudents = CreateStudentList();
 
         return students.Intersect(secondIntersectListOfStudents);
     }
@@ -253,7 +262,7 @@ class Program
     // Union of two lists of students
     private static IEnumerable<Student> UnionElementsInStudentList(List<Student> students)
     {
-        var secondUnionListOfStudents = CreateSecondStudentList();
+        var secondUnionListOfStudents = CreateStudentList();
 
         return students.Union(secondUnionListOfStudents);
     }
@@ -261,7 +270,7 @@ class Program
     // Excluding elements of one list from another list
     private static IEnumerable<Student> ExceptElementsInStudentList(List<Student> students)
     {
-        var secondExceptListOfStudents = CreateSecondStudentList();
+        var secondExceptListOfStudents = CreateStudentList();
 
         return students.Except(secondExceptListOfStudents);
     }
@@ -273,20 +282,15 @@ class Program
     }
 
     // Checking if all students are adults
-    private static bool AllStudentsIsAdult(List<Student> students)
+    private static bool AreAllStidentsAdult(List<Student> students)
     {
         return students.All(s => IsAdult(s.DateOfBirth));
 
         static bool IsAdult(DateTime dateOfBirth)
         {
             DateTime today = DateTime.Today;
-            int age = today.Year - dateOfBirth.Year;
-            if (dateOfBirth.Date > today.AddYears(-age))
-            {
-                age--;
-            }
-
-            return age >= 18;
+            DateTime eighteenYearsAgo = today.AddYears(-18);
+            return dateOfBirth <= eighteenYearsAgo;
         }
     }
 
@@ -313,7 +317,7 @@ class Program
     // Joining students to another list by last name
     private static IEnumerable<Student> JoinMethod(List<Student> students)
     {
-        var secondListOfStudents = CreateSecondStudentList();
+        var secondListOfStudents = CreateStudentList();
 
         return students.Join(
             secondListOfStudents,
