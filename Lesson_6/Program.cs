@@ -184,15 +184,15 @@ class Program
     }
 
     // Returning the last element from the list of students
-    private static IEnumerable<Student> ReturnLastElement(List<Student> students)
+    private static Student ReturnLastElement(List<Student> students)
     {
-        yield return students.LastOrDefault();
+        return students.LastOrDefault();
     }
 
     // Getting an element by index
-    private static IEnumerable<Student> ElementAtMethod(List<Student> students)
+    private static Student ElementAtMethod(List<Student> students)
     {
-        yield return students.ElementAt(4);
+        return students.ElementAt(4);
     }
 
     // Concatenating two lists of students
@@ -297,9 +297,7 @@ class Program
     // Reversing the list of students
     private static IEnumerable<Student> ReverseList(List<Student> students)
     {
-        var reversedList = students.ToList();
-        reversedList.Reverse();
-        return reversedList;
+        return students.AsEnumerable().Reverse();
     }
 
     // Converting the list of students to a Lookup for grouping by the first letter of the name
@@ -317,7 +315,7 @@ class Program
     // Joining students to another list by last name
     private static IEnumerable<Student> JoinMethod(List<Student> students)
     {
-        var secondListOfStudents = CreateStudentList();
+        var secondListOfStudents = students.ToList();
 
         return students.Join(
             secondListOfStudents,
