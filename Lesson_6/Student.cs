@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Lesson_6_StudentProperties
 {
-    record Student
+    public record Student
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

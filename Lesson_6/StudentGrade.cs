@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lesson_6_StudentGradeProperties
 {
-    class StudentGrade
+    public class StudentGrade
     {
         public double AverageNote { get; set; }
         public double MinNote { get; set; }

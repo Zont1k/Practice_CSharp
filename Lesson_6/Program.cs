@@ -1,5 +1,4 @@
 ﻿using AutoFixture;
-using Lesson_6_StudentEqualityComparer;
 using Lesson_6_StudentProperties;
 using Spectre.Console;
 using System.Text.Json;
@@ -9,7 +8,7 @@ class Program
     private static readonly Fixture fixture = new Fixture();
     static void Main(string[] args)
     {
-        var students = CreateStudentList();
+       var students = CreateStudentList();
 
         var filteredStudents = FilterStudentsByFirstLetter(students);
 
@@ -124,19 +123,15 @@ class Program
     // Method for creating a second list of students
     private static List<Student> CreateStudentList()
     {
-        var students = new List<Student>();
+        var secondList = new List<Student>();
 
         for (int i = 0; i < 10; i++)
         {
             var student = fixture.Create<Student>();
-            students.Add(student);
+            secondList.Add(student);
         }
-
-        var secondList = students.Take(2).ToList();
-
         return secondList;
     }
-
 
     static void PrintSerializedObject(object obj)
     {
@@ -167,13 +162,12 @@ class Program
             .ThenBy(s => s.DateOfBirth);
     }
 
-    // The standard equality comparator compares objects by reference, not by content. This means that if two objects
-    // refer to the same location in memory (have the same reference), then they will be considered the same and one of
-    // them will be deleted as a duplicate.
+        // The standard equality comparator compares objects by reference, not by content. This means that if two objects
+        // refer to the same location in memory (have the same reference), then they will be considered the same and one of
+        // them will be deleted as a duplicate.
     private static IEnumerable<Student> RemoveDuplicates(List<Student> students)
     {
-        var comparer = new StudentNameComparer();
-        return students.Distinct(comparer);
+        return students.Distinct();
     }
 
     private static DateTime FindEarliestDateOfBirth(List<Student> students)
@@ -198,7 +192,7 @@ class Program
     // Getting an element by index
     private static Student ElementAtMethod(List<Student> students)
     {
-        return students.ElementAt(1);
+        return students.ElementAt(4);
     }
 
     // Concatenating two lists of students
