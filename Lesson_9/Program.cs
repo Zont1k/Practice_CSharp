@@ -37,7 +37,7 @@ class Program
     {
         foreach (string sourcePath in sourcePaths)
         {
-            string foldername = new DirectoryInfo(sourcePath).Name;
+            string foldername = Path.GetFileName(sourcePath);
             string newFolderPath = Path.Combine(destinationPath, foldername);
 
             if (!Directory.Exists(newFolderPath))
