@@ -6,6 +6,8 @@ using System.Threading;
 class Program
 {
     static int copiedFilesCount = 0;
+    static object locker = new object();
+
     static void Main(string[] args)
     {
         Stopwatch stopWatch = new Stopwatch();
@@ -42,19 +44,25 @@ class Program
         for (int i = 0; i < sourcePaths.Length; i++)
         {
             string sourcePath = sourcePaths[i];
-            threads[i] = new Thread(() =>
-            {
-                string fileName = Path.GetFileName(sourcePath);
-                string newFolderPath = Path.Combine(destinationPath, fileName);
-                File.Copy(sourcePath, newFolderPath, true);
-                Console.WriteLine($"Copied {sourcePath} to {newFolderPath}");
-            });
+            threads[i] = new Thread(() => CopyFile(sourcePath, destinationPath));
             threads[i].Start();
-            copiedFilesCount++;
         }
-        foreach (var thread in threads)
+        
+        foreach (Thread thread in threads)
         {
             thread.Join();
+        }
+    }
+
+    static void CopyFile(string sourcePath, string destinationPath)
+    {
+        string fileName = Path.GetFileName(sourcePath);
+        string newFolderPath = Path.Combine(destinationPath, fileName);
+        File.Copy(sourcePath, newFolderPath, true);
+
+        lock (locker)
+        {
+            copiedFilesCount++;
         }
     }
 }
