@@ -14,34 +14,62 @@ class Program
     {
         Stopwatch stopWatch = new Stopwatch();
 
-        string destinationPath = AnsiConsole.Prompt(
-            new TextPrompt<string>("[red]Enter destination path:[/]")
-                .PromptStyle("yellow")
-                .ValidationErrorMessage("Please enter a valid path")
-                .Validate(path => !string.IsNullOrEmpty(path.Trim())));
+        var selectOption = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("Choose an option. Do you want to manually specify paths or use the default system?")
+                .PageSize(3)
+                .AddChoices(new[] {
+                    "Manually specify paths", "Default system" }));
 
+        string destinationPath = "";
         List<string> sourcePaths = new List<string>();
 
-        while (true)
+        if (selectOption == "Manually specify paths")
         {
-            string sourcePath = AnsiConsole.Prompt(
-                new TextPrompt<string>("[red]Enter source path:[/]")
+            destinationPath = AnsiConsole.Prompt(
+                new TextPrompt<string>("[red]Enter destination path:[/]")
                     .PromptStyle("yellow")
                     .ValidationErrorMessage("Please enter a valid path")
                     .Validate(path => !string.IsNullOrEmpty(path.Trim())));
 
-            sourcePaths.Add(sourcePath);
-
-            string answer = AnsiConsole.Prompt(
-                new TextPrompt<string>("Do you want to insert another path? (y/n)")
-                    .PromptStyle("yellow")
-                    .ValidationErrorMessage("Please enter 'y' or 'n'")
-                    .Validate(input => input.ToLowerInvariant() == "y" || input.ToLowerInvariant() == "n"));
-
-            if (answer.ToLowerInvariant() != "y")
+            while (true)
             {
-                break;
+                string sourcePath = AnsiConsole.Prompt(
+                    new TextPrompt<string>("[red]Enter source path:[/]")
+                        .PromptStyle("yellow")
+                        .ValidationErrorMessage("Please enter a valid path")
+                        .Validate(path => !string.IsNullOrEmpty(path.Trim())));
+
+                sourcePaths.Add(sourcePath);
+
+                string answer = AnsiConsole.Prompt(
+                    new TextPrompt<string>("Do you want to insert another path? (y/n)")
+                        .PromptStyle("yellow")
+                        .ValidationErrorMessage("Please enter 'y' or 'n'")
+                        .Validate(input => input.ToLowerInvariant() == "y" || input.ToLowerInvariant() == "n"));
+
+                if (answer.ToLowerInvariant() != "y")
+                {
+                    break;
+                }
             }
+        }
+        else if (selectOption == "Default system")
+        {
+            string defaultDestinationPath = "C:\\Users\\Schule8\\OneDrive\\Desktop\\CopiedFolders";
+
+            string[] defaultSourcePaths =
+            {
+                "C:\\Users\\Schule8\\OneDrive\\Desktop\\Practice_CSharp\\Lesson_7_DirectoryAndThreads\\Folder-1.zip",
+                "C:\\Users\\Schule8\\OneDrive\\Desktop\\Practice_CSharp\\Lesson_7_DirectoryAndThreads\\Folder-2.zip",
+                "C:\\Users\\Schule8\\OneDrive\\Desktop\\Practice_CSharp\\Lesson_7_DirectoryAndThreads\\Folder-3.zip",
+                "C:\\Users\\Schule8\\OneDrive\\Desktop\\Practice_CSharp\\Lesson_7_DirectoryAndThreads\\Folder-4.zip",
+                "C:\\Users\\Schule8\\OneDrive\\Desktop\\Practice_CSharp\\Lesson_7_DirectoryAndThreads\\Folder-5.zip",
+                "C:\\Users\\Schule8\\OneDrive\\Desktop\\Practice_CSharp\\Lesson_7_DirectoryAndThreads\\Folder-6.zip"
+            };
+
+            destinationPath = defaultDestinationPath;
+            sourcePaths.AddRange(defaultSourcePaths);
         }
 
         stopWatch.Start();
@@ -57,9 +85,10 @@ class Program
                     new SpinnerColumn(),
                });
 
-            progress.Start(ctx =>
+            progress.Start(task =>
             {
-                CopyFiles(sourcePaths, destinationPath, ctx);
+                var globalTask = task.AddTask("[white]Global Progress[/]");
+                CopyFiles(sourcePaths, destinationPath, task, globalTask);
             });
 
             stopWatch.Stop();
@@ -73,14 +102,20 @@ class Program
         }
     }
 
-    static void CopyFiles(List<string> sourcePaths, string destinationPath, ProgressContext ctx)
+    static void CopyFiles(List<string> sourcePaths, string destinationPath, ProgressContext ctx, ProgressTask globalTask)
     {
         Thread[] threads = new Thread[sourcePaths.Count];
+        long totalSize = 0;
+
+        foreach (var sourcePath in sourcePaths)
+        {
+            totalSize += new FileInfo(sourcePath).Length;
+        }
 
         for (int i = 0; i < sourcePaths.Count; i++)
         {
             var task = ctx.AddTask(Path.GetFileName(sourcePaths[i]));
-            threads[i] = CopyFileAsync(sourcePaths[i], destinationPath, task); 
+            threads[i] = CopyFileAsync(sourcePaths[i], destinationPath, task, globalTask, totalSize);
         }
 
         foreach (Thread thread in threads)
@@ -93,13 +128,13 @@ class Program
         }
     }
 
-    static Thread CopyFileAsync(string sourcePath, string destinationPath, ProgressTask task)
+    static Thread CopyFileAsync(string sourcePath, string destinationPath, ProgressTask task, ProgressTask globalTask, long totalSize)
     {
-        var thread = new Thread(() => Copy(sourcePath, Path.Combine(destinationPath, Path.GetFileName(sourcePath)), task));
+        var thread = new Thread(() => Copy(sourcePath, Path.Combine(destinationPath, Path.GetFileName(sourcePath)), task, globalTask, totalSize));
         return thread;
     }
 
-    public static void Copy(string inputFilePath, string outputFilePath, ProgressTask task)
+    public static void Copy(string inputFilePath, string outputFilePath, ProgressTask task, ProgressTask globalTask, long totalSize)
     {
         int bufferSize = 1024 * 1024;
 
@@ -119,6 +154,7 @@ class Program
                     totalBytesRead += bytesRead;
                     Thread.Sleep(1000);
                     task.Increment(bytesRead);
+                    globalTask.Increment((double)bytesRead / totalSize * 100);
                 }
             }
         }
@@ -128,4 +164,5 @@ class Program
             copiedFilesCount++;
         }
     }
+
 }
