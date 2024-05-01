@@ -30,7 +30,7 @@ class Program
                 new TextPrompt<string>("[red]Enter destination path:[/]")
                     .PromptStyle("yellow")
                     .ValidationErrorMessage("Please enter a valid path")
-                    .Validate(path => !string.IsNullOrEmpty(path.Trim())));
+                    .Validate(path => !string.IsNullOrEmpty(path.Trim()) && Directory.Exists(path)));
 
             while (true)
             {
@@ -38,7 +38,7 @@ class Program
                     new TextPrompt<string>("[red]Enter source path:[/]")
                         .PromptStyle("yellow")
                         .ValidationErrorMessage("Please enter a valid path")
-                        .Validate(path => !string.IsNullOrEmpty(path.Trim())));
+                        .Validate(path => !string.IsNullOrEmpty(path.Trim()) && Directory.Exists(path)));
 
                 sourcePaths.Add(sourcePath);
 
