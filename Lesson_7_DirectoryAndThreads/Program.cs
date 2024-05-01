@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using Spectre.Console;
 
 class Program
 {
@@ -12,20 +14,54 @@ class Program
     {
         Stopwatch stopWatch = new Stopwatch();
 
-        string destinationPath = @"C:\Users\Schule8\OneDrive\Desktop\CopiedFolders";
-        string[] sourcePaths =
+        string destinationPath = AnsiConsole.Prompt(
+            new TextPrompt<string>("[red]Enter destination path:[/]")
+                .PromptStyle("yellow")
+                .ValidationErrorMessage("Please enter a valid path")
+                .Validate(path => !string.IsNullOrEmpty(path.Trim())));
+
+        List<string> sourcePaths = new List<string>();
+
+        while (true)
         {
-            @"C:\Users\Schule8\RiderProjects\Practice_CSharp\Lesson_7_DirectoryAndThreads\Folder-1.zip",
-            @"C:\Users\Schule8\RiderProjects\Practice_CSharp\Lesson_7_DirectoryAndThreads\Folder-2.zip",
-            @"C:\Users\Schule8\RiderProjects\Practice_CSharp\Lesson_7_DirectoryAndThreads\Folder-3.zip",
-            @"C:\Users\Schule8\RiderProjects\Practice_CSharp\Lesson_7_DirectoryAndThreads\Folder-4.zip",
-            @"C:\Users\Schule8\RiderProjects\Practice_CSharp\Lesson_7_DirectoryAndThreads\Folder-5.zip"
-        };
+            string sourcePath = AnsiConsole.Prompt(
+                new TextPrompt<string>("[red]Enter source path:[/]")
+                    .PromptStyle("yellow")
+                    .ValidationErrorMessage("Please enter a valid path")
+                    .Validate(path => !string.IsNullOrEmpty(path.Trim())));
+
+            sourcePaths.Add(sourcePath);
+
+            string answer = AnsiConsole.Prompt(
+                new TextPrompt<string>("Do you want to insert another path? (y/n)")
+                    .PromptStyle("yellow")
+                    .ValidationErrorMessage("Please enter 'y' or 'n'")
+                    .Validate(input => input.ToLowerInvariant() == "y" || input.ToLowerInvariant() == "n"));
+
+            if (answer.ToLowerInvariant() != "y")
+            {
+                break;
+            }
+        }
 
         stopWatch.Start();
         try
         {
-            CopyFolders(destinationPath, sourcePaths);
+            var progress = AnsiConsole.Progress()
+               .Columns(new ProgressColumn[]
+               {
+                    new TaskDescriptionColumn(),
+                    new ProgressBarColumn(),
+                    new PercentageColumn(),
+                    new RemainingTimeColumn(),
+                    new SpinnerColumn(),
+               });
+
+            progress.Start(ctx =>
+            {
+                CopyFiles(sourcePaths, destinationPath, ctx);
+            });
+
             stopWatch.Stop();
 
             Console.WriteLine($"Time: {stopWatch.Elapsed} sec");
@@ -37,28 +73,55 @@ class Program
         }
     }
 
-    static void CopyFolders(string destinationPath, params string[] sourcePaths)
+    static void CopyFiles(List<string> sourcePaths, string destinationPath, ProgressContext ctx)
     {
-        Thread[] threads = new Thread[sourcePaths.Length];
+        Thread[] threads = new Thread[sourcePaths.Count];
 
-        for (int i = 0; i < sourcePaths.Length; i++)
+        for (int i = 0; i < sourcePaths.Count; i++)
         {
-            string sourcePath = sourcePaths[i];
-            threads[i] = new Thread(() => CopyFile(sourcePath, destinationPath));
-            threads[i].Start();
+            var task = ctx.AddTask(Path.GetFileName(sourcePaths[i]));
+            threads[i] = CopyFileAsync(sourcePaths[i], destinationPath, task); 
         }
-        
+
+        foreach (Thread thread in threads)
+        {
+            thread.Start();
+        }
         foreach (Thread thread in threads)
         {
             thread.Join();
         }
     }
 
-    static void CopyFile(string sourcePath, string destinationPath)
+    static Thread CopyFileAsync(string sourcePath, string destinationPath, ProgressTask task)
     {
-        string fileName = Path.GetFileName(sourcePath);
-        string newFolderPath = Path.Combine(destinationPath, fileName);
-        File.Copy(sourcePath, newFolderPath, true);
+        var thread = new Thread(() => Copy(sourcePath, Path.Combine(destinationPath, Path.GetFileName(sourcePath)), task));
+        return thread;
+    }
+
+    public static void Copy(string inputFilePath, string outputFilePath, ProgressTask task)
+    {
+        int bufferSize = 1024 * 1024;
+
+        using (FileStream fileStream = new FileStream(outputFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite))
+        {
+            using (FileStream fs = new FileStream(inputFilePath, FileMode.Open, FileAccess.Read))
+            {
+                fileStream.SetLength(fs.Length);
+                int bytesRead = -1;
+                byte[] bytes = new byte[bufferSize];
+                long totalBytesRead = 0;
+                task.MaxValue(fs.Length);
+
+                while ((bytesRead = fs.Read(bytes, 0, bufferSize)) > 0)
+                {
+                    fileStream.Write(bytes, 0, bytesRead);
+                    totalBytesRead += bytesRead;
+                    Thread.Sleep(1000);
+                    task.Increment(bytesRead);
+                }
+            }
+        }
 
         lock (locker)
         {
