@@ -11,7 +11,6 @@ class Program
     static object locker = new object();
     static readonly string[] Choices = { "Manually specify paths", "Default system" };
 
-
     static void Main(string[] args)
     {
         Stopwatch stopWatch = new Stopwatch();
