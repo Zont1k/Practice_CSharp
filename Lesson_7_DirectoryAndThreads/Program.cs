@@ -9,6 +9,8 @@ class Program
 {
     static int copiedFilesCount = 0;
     static object locker = new object();
+    static readonly string[] Choices = { "Manually specify paths", "Default system" };
+
 
     static void Main(string[] args)
     {
@@ -18,8 +20,7 @@ class Program
             new SelectionPrompt<string>()
                 .Title("Choose an option. Do you want to manually specify paths or use the default system?")
                 .PageSize(3)
-                .AddChoices(new[] {
-                    "Manually specify paths", "Default system" }));
+                .AddChoices(Choices));
 
         string destinationPath = "";
         List<string> sourcePaths = new List<string>();
