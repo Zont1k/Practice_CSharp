@@ -9,8 +9,8 @@ class Program
 {
     static int copiedFilesCount = 0;
     static object locker = new object();
-    const string msp = "Manually specify paths";
-    const string ds = "Default System";
+    const string MANUALLY_SPECIFY_PATHS = "Manually specify paths";
+    const string DAFAULT_SYSTEM = "Default System";
 
     static void Main(string[] args)
     {
@@ -20,7 +20,7 @@ class Program
             new SelectionPrompt<string>()
                 .Title("Choose an option. Do you want to manually specify paths or use the default system?")
                 .PageSize(3)
-                .AddChoices(msp, ds));
+                .AddChoices(MANUALLY_SPECIFY_PATHS, DEFAULT_SYSTEM));
 
         string destinationPath = "";
         List<string> sourcePaths = new List<string>();
