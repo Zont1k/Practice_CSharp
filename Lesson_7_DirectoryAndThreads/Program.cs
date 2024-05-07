@@ -25,7 +25,7 @@ class Program
         string destinationPath = "";
         List<string> sourcePaths = new List<string>();
 
-        if (selectOption == msp)
+        if (selectOption == MANUALLY_SPECIFY_PATHS)
         {
             destinationPath = AnsiConsole.Prompt(
                 new TextPrompt<string>("[red]Enter destination path:[/]")
@@ -55,7 +55,7 @@ class Program
                 }
             }
         }
-        else if (selectOption == ds)
+        else if (selectOption == DEFAULT_SYSTEM)
         {
             string defaultDestinationPath = "C:\\Users\\Schule8\\OneDrive\\Desktop\\CopiedFolders";
 
