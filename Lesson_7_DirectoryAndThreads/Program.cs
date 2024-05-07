@@ -9,7 +9,8 @@ class Program
 {
     static int copiedFilesCount = 0;
     static object locker = new object();
-    static readonly string[] Choices = { "Manually specify paths", "Default system" };
+    const string msp = "Manually specify paths";
+    const string ds = "Default System";
 
     static void Main(string[] args)
     {
@@ -19,12 +20,12 @@ class Program
             new SelectionPrompt<string>()
                 .Title("Choose an option. Do you want to manually specify paths or use the default system?")
                 .PageSize(3)
-                .AddChoices(Choices));
+                .AddChoices(msp, ds));
 
         string destinationPath = "";
         List<string> sourcePaths = new List<string>();
 
-        if (selectOption == "Manually specify paths")
+        if (selectOption == msp)
         {
             destinationPath = AnsiConsole.Prompt(
                 new TextPrompt<string>("[red]Enter destination path:[/]")
@@ -54,7 +55,7 @@ class Program
                 }
             }
         }
-        else if (selectOption == "Default system")
+        else if (selectOption == ds)
         {
             string defaultDestinationPath = "C:\\Users\\Schule8\\OneDrive\\Desktop\\CopiedFolders";
 
