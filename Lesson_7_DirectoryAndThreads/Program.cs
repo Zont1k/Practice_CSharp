@@ -10,7 +10,7 @@ class Program
     static int copiedFilesCount = 0;
     static object locker = new object();
     const string MANUALLY_SPECIFY_PATHS = "Manually specify paths";
-    const string DAFAULT_SYSTEM = "Default System";
+    const string DEFAULT_SYSTEM = "Default System";
 
     static void Main(string[] args)
     {
