@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -7,18 +8,12 @@ using Spectre.Console;
 class Program
 {
     const string apiKey = "45c6b1c77ec6da196fd2a2b805e63a78";
+    const string weatherApiUrlTemplate = "http://api.openweathermap.org/data/2.5/weather?q={0}&appid={1}&units=metric";
+    const string citiesApiUrl = "https://countriesnow.space/api/v0.1/countries/capital";
 
     static async Task Main(string[] args)
     {
-        string[] cities =
-        {
-            "Kyiv", "Odessa", "London", "Paris", "Berlin", "Madrid", "Rome", "Moscow", "Athens", "Vienna",
-            "Amsterdam", "Brussels", "Stockholm", "Budapest", "Warsaw", "Prague", "Oslo", "Dublin", "Copenhagen",
-            "Helsinki", "Lisbon", "Zurich", "New York", "Los Angeles", "Chicago", "Toronto", "Mexico City",
-            "Sao Paulo", "Buenos Aires", "Lima", "Rio de Janeiro", "Santiago", "Tokyo", "Shanghai", "Beijing",
-            "Seoul", "Hong Kong", "Bangkok", "Singapore", "Mumbai", "Jakarta", "Istanbul", "Dubai", "Tel Aviv",
-            "Kuala Lumpur", "Manila", "Taipei"
-        };
+        List<string> cities = await GetCitiesList();
 
         var selectOption = AnsiConsole.Prompt(
             new MultiSelectionPrompt<string>()
@@ -33,6 +28,16 @@ class Program
 
         using (var httpClient = new HttpClient())
         {
+            var tasks = new List<Task<string>>();
+
+            foreach (var city in selectOption)
+            {
+                var url = string.Format(weatherApiUrlTemplate, city, apiKey);
+                tasks.Add(FetchWeather(httpClient, url));
+            }
+
+            Task.WaitAll(tasks.ToArray());
+
             var table = new Table().Centered();
             table.AddColumn("[red]City[/]");
             table.AddColumn("[yellow]Temperature (°C)[/]");
@@ -40,21 +45,19 @@ class Program
             table.AddColumn("[darkorange3]Humidity (%)[/]");
             table.AddColumn("[green]Pressure[/]");
 
-            foreach (var city in selectOption)
+            foreach (var task in tasks)
             {
-                var url = $"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={apiKey}&units=metric";
-                var result = await FetchWeather(httpClient, url);
+                var result = await task;
                 dynamic weatherData = JsonConvert.DeserializeObject(result);
 
                 table.AddRow(
-                    city,
+                    (string)weatherData.name,
                     $"{weatherData.main.temp}°C",
                     (string)weatherData.weather[0].description,
                     $"{weatherData.main.humidity}%",
                     $"{weatherData.main.pressure} hPa"
                 );
             }
-
             AnsiConsole.Render(table);
         }
     }
@@ -63,5 +66,22 @@ class Program
     {
         var response = await httpClient.GetAsync(url);
         return await response.Content.ReadAsStringAsync();
+    }
+
+    static async Task<List<string>> GetCitiesList()
+    {
+        using (var httpClient = new HttpClient())
+        {
+            var response = await httpClient.GetAsync(citiesApiUrl);
+            response.EnsureSuccessStatusCode();
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            dynamic data = JsonConvert.DeserializeObject(jsonResponse);
+            var cities = new List<string>();
+            foreach (var item in data.data)
+            {
+                cities.Add((string)item.capital);
+            }
+            return cities;
+        }
     }
 }
