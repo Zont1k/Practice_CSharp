@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Spectre.Console;
 
 class Program
@@ -28,7 +28,7 @@ class Program
 
         using (var httpClient = new HttpClient())
         {
-            var tasks = new List<Task<string>>();
+            var tasks = new List<Task<WeatherData>>();
 
             foreach (var city in selectOption)
             {
@@ -47,25 +47,29 @@ class Program
 
             foreach (var task in tasks)
             {
-                var result = await task;
-                dynamic weatherData = JsonConvert.DeserializeObject(result);
-
+                var result = task.Result;
                 table.AddRow(
-                    (string)weatherData.name,
-                    $"{weatherData.main.temp}°C",
-                    (string)weatherData.weather[0].description,
-                    $"{weatherData.main.humidity}%",
-                    $"{weatherData.main.pressure} hPa"
+                    result.Name,
+                    $"{result.Main.Temp}°C",
+                    result.Weather[0].Description,
+                    $"{result.Main.Humidity}%",
+                    $"{result.Main.Pressure} hPa"
                 );
             }
             AnsiConsole.Render(table);
         }
     }
 
-    static async Task<string> FetchWeather(HttpClient httpClient, string url)
+    static async Task<WeatherData> FetchWeather(HttpClient httpClient, string url)
     {
         var response = await httpClient.GetAsync(url);
-        return await response.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync();
+        var weatherData = JsonSerializer.Deserialize<WeatherData>(content, new JsonSerializerOptions()
+        {
+            UnmappedMemberHandling = System.Text.Json.Serialization.JsonUnmappedMemberHandling.Skip,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        });
+        return weatherData;
     }
 
     static async Task<List<string>> GetCitiesList()
@@ -75,13 +79,47 @@ class Program
             var response = await httpClient.GetAsync(citiesApiUrl);
             response.EnsureSuccessStatusCode();
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            dynamic data = JsonConvert.DeserializeObject(jsonResponse);
-            var cities = new List<string>();
-            foreach (var item in data.data)
+            var cityData = JsonSerializer.Deserialize<CityData>(jsonResponse, new JsonSerializerOptions()
             {
-                cities.Add((string)item.capital);
+                UnmappedMemberHandling = System.Text.Json.Serialization.JsonUnmappedMemberHandling.Skip, 
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var cities = new List<string>();
+            foreach (var cityInfo in cityData.Data)
+            {
+                cities.Add(cityInfo.Capital);
             }
             return cities;
         }
     }
 }
+
+public class WeatherData
+{
+    public string Name { get; set; }
+    public MainInfo Main { get; set; }
+    public WeatherDescription[] Weather { get; set; }
+}
+
+public class MainInfo
+{
+    public float Temp { get; set; }
+    public int Humidity { get; set; }
+    public float Pressure { get; set; }
+}
+
+public class WeatherDescription
+{
+    public string Description { get; set; }
+}
+
+public class CityData
+{
+    public IEnumerable<CityInfo> Data { get; set; }
+}
+
+public class CityInfo
+{
+    public string Capital { get; set; }
+}
+
