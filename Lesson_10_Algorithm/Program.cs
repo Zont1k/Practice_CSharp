@@ -6,6 +6,13 @@ class Program
     {
         int[] array = { 4, 9, 7, 6, 2, 3, 8, 5, 0, 1 };
 
+        SortMathod(array);
+
+        PrintArray(array);
+    }
+
+    private static void SortMathod(int[] array)
+    {
         for (int i = 0; i < array.Length - 1; i++)
         {
             for (int j = i + 1; j < array.Length; j++)
@@ -18,8 +25,6 @@ class Program
                 }
             }
         }
-
-        PrintArray(array);
     }
 
     static void PrintArray(int[] arr)
