@@ -20,7 +20,7 @@ class Program
             new SelectionPrompt<string>()
                 .Title("Choose an option. Do you want to manually specify paths or use the default system?")
                 .PageSize(3)
-                .AddChoices(MANUALLY_SPECIFY_PATHS, DEFAULT_SYSTEM));
+                .AddChoices(MANUALLY_SPECIFY_PATHS, DAFAULT_SYSTEM));
 
         string destinationPath = "";
         List<string> sourcePaths = new List<string>();
@@ -55,7 +55,7 @@ class Program
                 }
             }
         }
-        else if (selectOption == DEFAULT_SYSTEM)
+        else if (selectOption == DAFAULT_SYSTEM)
         {
             string defaultDestinationPath = "C:\\Users\\Schule8\\OneDrive\\Desktop\\CopiedFolders";
 
