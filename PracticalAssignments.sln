@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -21,6 +22,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lesson_9_SortAlgorithm", "Lesson_9_SortAlgorithm\Lesson_9_SortAlgorithm.csproj", "{B537C3D7-4C71-44F8-8445-24E70DDE82C4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lesson_10_TimeZoneServer", "WebAssignments\Lesson_10_TimeZoneServer.csproj", "{D97C7FD4-A19C-4B44-B2BC-B27B86934844}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lesson_11_TimeZoneServerWebApi", "TimeZoneServerWebApi\Lesson_11_TimeZoneServerWebApi.csproj", "{86523CE9-F998-4923-B32A-40819FB88C37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,6 +71,10 @@ Global
 		{D97C7FD4-A19C-4B44-B2BC-B27B86934844}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D97C7FD4-A19C-4B44-B2BC-B27B86934844}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D97C7FD4-A19C-4B44-B2BC-B27B86934844}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86523CE9-F998-4923-B32A-40819FB88C37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86523CE9-F998-4923-B32A-40819FB88C37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86523CE9-F998-4923-B32A-40819FB88C37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86523CE9-F998-4923-B32A-40819FB88C37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
